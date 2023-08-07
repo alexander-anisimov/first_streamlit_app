@@ -3,6 +3,9 @@ import pandas
 import requests
 import snowflake.connector
 from urllib.error import URLError
+from datetime import datetime
+
+now = datetime.now()
 
 streamlit.title('My Parents New Healthy Diner')
 
@@ -50,3 +53,6 @@ add_my_fruit = streamlit.text_input('What fruit would you like to add?', 'jackfr
 streamlit.write('Thanks for adding ', add_my_fruit)
 
 my_cur.execute("insert into fruit_load_list values ('from streamlit')")
+
+
+streamlit.header("NEW UPDATE!!" + str(now))
