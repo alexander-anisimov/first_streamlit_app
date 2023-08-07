@@ -5,6 +5,14 @@ import snowflake.connector
 from urllib.error import URLError
 from datetime import datetime
 
+
+def get_fruityvice_data(this_fruit_choice):
+    fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + this_fruit_choice)
+    fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
+
+    return fruityvice_normalized
+
+
 now = datetime.now()
 
 streamlit.title('My Parents New Healthy Diner')
@@ -33,14 +41,13 @@ try:
     if not fruit_choice:
         streamlit.error('Please select a fruit to get information')
     else:
-        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
-        fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
+        back_from_function = get_fruityvice_data(fruit_choice)
 
-        streamlit.dataframe(fruityvice_normalized)
+        streamlit.dataframe(back_from_function)
 except URLError as e:
     streamlit.error()
 
-streamlit.stop()
+# streamlit.stop()
 
 my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
 my_cur = my_cnx.cursor()
@@ -55,4 +62,4 @@ streamlit.write('Thanks for adding ', add_my_fruit)
 my_cur.execute("insert into fruit_load_list values ('from streamlit')")
 
 
-streamlit.header("NEW UPDATE!!" + str(now))
+streamlit.header("NEW UPDATE!! " + str(now))
